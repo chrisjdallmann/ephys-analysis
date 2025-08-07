@@ -1,0 +1,7 @@
+__pycache__/
+.ipynb_checkpoints
+*.asv
+*.html
+*.ipynb filter=strip-notebook-output  
+*.m~
+ - Copy.gitattributes
