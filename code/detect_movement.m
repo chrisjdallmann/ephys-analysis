@@ -1,11 +1,11 @@
-% DETECT_SPIKES.m calls a GUI for interactive spike detection 
+% DETECT_MOVEMENT.m detects walking, flight, and other movement bouts 
 %
 % Functions/toolboxes required:
 %    process_treadmill_data.m
 
 % Author: Chris J. Dallmann 
 % Affiliation: University of Wuerzburg
-% Last revision: 07-August-2025
+% Last revision: 08-August-2025
 
 % ------------- BEGIN CODE -------------
 

@@ -1,11 +1,11 @@
-% TRIM_DATA.m loads and trims abf-files
+% TRIM_FILE.m loads and trims abf-files
 %
 % Functions/toolboxes required:
 %    load_abf.m
 
 % Author: Chris J. Dallmann 
 % Affiliation: University of Wuerzburg
-% Last revision: 07-August-2025
+% Last revision: 08-August-2025
 
 % ------------- BEGIN CODE -------------
 
