@@ -24,7 +24,7 @@ sampling_rate_camera = 150;
 
 % Load file
 load([file_path, file_name, '.mat']);
-[~, meta_data] = abfload_Sander([file_path, file_name, '.abf']);
+[~, meta_data] = load_abf([file_path, file_name, '.abf']);
 
 n_frames_ephys = size(data,1);
 n_frames_treadmill = round(n_frames_ephys / (sampling_rate_ephys/sampling_rate_treadmill));
@@ -158,8 +158,11 @@ elseif strcmp(movement_type,'Pushing')
     n_events = size(annotations,1);
     start_frame = annotations.start_frame(1);
     for event = 1:n_events
-        onset = annotations.onset(event) - start_frame + 1;
-        offset = annotations.offset(event) - start_frame + 1;
+        onset = annotations.onset_corrected(event) - start_frame + 1;
+        offset = annotations.offset_corrected(event) - start_frame + 1;
+        if isnan(offset)
+            offset = numel(movement);
+        end
         movement(onset:offset) = 1;
     end
     
@@ -168,9 +171,14 @@ elseif strcmp(movement_type,'Pushing')
     n = 1:length(movement);
     nq = linspace(1, length(movement), floor(length(movement)*upsampling_factor));
     movement_upsampled = interp1(n, movement, nq, 'nearest')';
-    % Add missing frames at the end
-    movement_upsampled = [movement_upsampled; ...
-        repmat(movement_upsampled(end), n_frames_ephys-numel(movement_upsampled), 1)]; 
+    % Add missing frames or delete extra frames at the end
+    frame_difference = n_frames_ephys-numel(movement_upsampled);
+    if frame_difference>0
+        movement_upsampled = [movement_upsampled; ...
+            repmat(movement_upsampled(end), n_frames_ephys-numel(movement_upsampled), 1)];
+    elseif frame_difference<0
+        movement_upsampled(end-abs(frame_difference)+1:end) = []; 
+    end
 
     % % Check upsampling
     % figure
