@@ -13,11 +13,11 @@ clear
 clc
 
 % Settings
-file_name = '2025_07_01_0001';
+file_name = '2025_05_09_0013';
 file_path = 'Z:\Transfer\Chris\von Sirin\RRpushing\'; 
 is_camera_trigger = true;
 is_annotation = true;
-annotations_path = 'Z:\Transfer\Chris\von Sirin\RRpushing\pushing_events_joint.xlsx'; 
+annotations_path = 'Z:\Transfer\Chris\von Sirin\RRpushing\pushing_events.xlsx'; 
 
 % Load file
 [data, meta_data] = load_abf([file_path, file_name, '.abf']);
@@ -79,18 +79,24 @@ else
     end
     end_frame = camera_frame_indices(end);
 
+    % Generate time vector
+    %time = linspace(0,numel(trigger)/20000,numel(trigger))';
+    %time = time-time(start_frame);
+    %time = time-time(camera_frame_indices(1));
+    time = 1:n_frames;
+
     % Plot data
     fig = figure();
     for channel = 1:n_channels
         ax(channel) = subplot(n_channels, 1, channel);
         hold on
-        plot(data(:,channel),'k');
+        plot(time,data(:,channel),'k');
         % Indiciate start frame
-        plot([start_frame, start_frame], [min(data(:,channel)), max(data(:,channel))], 'm')
-        plot([end_frame, end_frame], [min(data(:,channel)), max(data(:,channel))], 'm')
+        plot([time(start_frame), time(start_frame)], [min(data(:,channel)), max(data(:,channel))], 'm')
+        plot([time(end_frame), time(end_frame)], [min(data(:,channel)), max(data(:,channel))], 'm')
         if channel == trigger_channel
             % Plot detected frames
-            plot(camera_frame_indices, data(camera_frame_indices,channel), '.m')
+            plot(time(camera_frame_indices), data(camera_frame_indices,channel), '.m')
         end
         hold off
         set(gca,'Color','none')
@@ -121,8 +127,8 @@ disp(['End frame: ', num2str(end_frame)])
 
 % Trim data
 data = data(start_frame:end_frame,:);
-
-% Save trimmed data
-disp('Saving data...')
-save([file_path, file_name, '.mat'], 'data')
-disp(['Data saved as ', file_path, file_name, '.mat'])
+ 
+% % Save trimmed data
+% disp('Saving data...')
+% save([file_path, file_name, '.mat'], 'data')
+% disp(['Data saved as ', file_path, file_name, '.mat'])
