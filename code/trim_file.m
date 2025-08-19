@@ -5,7 +5,7 @@
 
 % Author: Chris J. Dallmann 
 % Affiliation: University of Wuerzburg
-% Last revision: 08-August-2025
+% Last revision: 19-August-2025
 
 % ------------- BEGIN CODE -------------
 
@@ -13,20 +13,20 @@ clear
 clc
 
 % Settings
-file_name = '2025_05_09_0013';
+file_name = '2025_08_18_0011';
 file_path = 'Z:\Transfer\Chris\von Sirin\RRpushing\'; 
 is_camera_trigger = true;
 is_annotation = true;
 annotations_path = 'Z:\Transfer\Chris\von Sirin\RRpushing\pushing_events.xlsx'; 
+
+% Display file name
+fprintf([file_name,'\n','\n'])
 
 % Load file
 [data, meta_data] = load_abf([file_path, file_name, '.abf']);
 
 n_frames = size(data,1);
 n_channels = size(data,2);
-
-% Display file name
-disp(file_name)
 
 if ~is_camera_trigger
     % Plot data
@@ -63,6 +63,7 @@ else
     % Get indices of camera frames (rising edge)
     camera_frame_indices = peakfinder(diff(trigger), [], 0.5);
     camera_frame_indices = camera_frame_indices+1;
+    fprintf(['\nDetected camera frames: ',num2str(numel(camera_frame_indices)),'\n'])
 
     % Set start and end frame
     if ~is_annotation
@@ -128,7 +129,7 @@ disp(['End frame: ', num2str(end_frame)])
 % Trim data
 data = data(start_frame:end_frame,:);
  
-% % Save trimmed data
-% disp('Saving data...')
-% save([file_path, file_name, '.mat'], 'data')
-% disp(['Data saved as ', file_path, file_name, '.mat'])
+% Save trimmed data
+disp('Saving data...')
+save([file_path, file_name, '.mat'], 'data', '-v7.3')
+disp(['Data saved as ', file_path, file_name, '.mat'])
