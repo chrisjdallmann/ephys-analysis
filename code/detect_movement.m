@@ -13,9 +13,9 @@ clear
 clc
 
 % Settings
-file_name = '2025_07_04_0011';
-file_path = 'Z:\Transfer\Chris\von Sirin\RRpushing\'; 
-movement_type = 'Pushing'; 
+file_name = '2025_05_09_0007';
+file_path = 'Z:\Transfer\Chris\von Sirin\RRwalking\'; 
+movement_type = 'Walking'; 
 annotations_path = 'Z:\Transfer\Chris\von Sirin\RRpushing\pushing_events_joint.xlsx'; 
 
 sampling_rate_ephys = 20000;
@@ -32,10 +32,7 @@ n_frames_camera = round(n_frames_ephys / (sampling_rate_ephys/sampling_rate_came
 
 
 % Detect movement
-if strcmp(movement_type,'Walking')
-    % Initialize movement vector
-    movement = zeros(n_frames_treadmill,1);
-    
+if strcmp(movement_type,'Walking')   
     % Get treadmill data
     x_channel = find(strcmp(meta_data.recChNames, 'Veloc X'));
     y_channel = find(strcmp(meta_data.recChNames, 'Veloc Y'));
@@ -53,6 +50,9 @@ if strcmp(movement_type,'Walking')
     xy_speed_thresh = 0.3; % mm/s
     z_speed_thresh = 10; % deg/s
     
+    % Initialize movement vector
+    movement = zeros(numel(x_vel),1);
+
     xy_movement = movement;
     z_movement = movement;
     
@@ -89,9 +89,15 @@ if strcmp(movement_type,'Walking')
     n = 1:length(movement);
     nq = linspace(1, length(movement), floor(length(movement)*upsampling_factor));
     movement_upsampled = interp1(n, movement, nq, 'nearest')';
-    % Add missing frames at the end
-    movement_upsampled = [movement_upsampled; ...
-        repmat(movement_upsampled(end), n_frames_ephys-numel(movement_upsampled), 1)]; 
+    
+    % Add missing frames or delete extra frames at the end
+    frame_difference = n_frames_ephys-numel(movement_upsampled);
+    if frame_difference>0
+        movement_upsampled = [movement_upsampled; ...
+            repmat(movement_upsampled(end), n_frames_ephys-numel(movement_upsampled), 1)];
+    elseif frame_difference<0
+        movement_upsampled(end-abs(frame_difference)+1:end) = []; 
+    end
 
     movement = movement_upsampled;
 
@@ -127,7 +133,7 @@ elseif strcmp(movement_type,'Flight')
     movement = binary_replace_filter(movement, win_size*sampling_rate_ephys);
     
     % Assign short epochs to previous epoch
-    win_size = 0.3; % s
+    win_size = 0.1; % s
     movement_fwd = binary_hysteresis_filter(movement, win_size*sampling_rate_ephys);
     movement_bwd = binary_hysteresis_filter(flipud(movement), win_size*sampling_rate_ephys);
     movement = double(movement_fwd | flipud(movement_bwd));
@@ -171,6 +177,7 @@ elseif strcmp(movement_type,'Pushing')
     n = 1:length(movement);
     nq = linspace(1, length(movement), floor(length(movement)*upsampling_factor));
     movement_upsampled = interp1(n, movement, nq, 'nearest')';
+    
     % Add missing frames or delete extra frames at the end
     frame_difference = n_frames_ephys-numel(movement_upsampled);
     if frame_difference>0
