@@ -5,7 +5,7 @@
 
 % Author: Chris J. Dallmann 
 % Affiliation: University of Wuerzburg
-% Last revision: 08-August-2025
+% Last revision: 21-October-2025
 
 % ------------- BEGIN CODE -------------
 
@@ -13,10 +13,10 @@ clear
 clc
 
 % Settings
-file_name = '2025_05_09_0007';
+file_name = '2025_05_09_0008';
 file_path = 'Z:\Transfer\Chris\von Sirin\RRwalking\'; 
 movement_type = 'Walking'; 
-annotations_path = 'Z:\Transfer\Chris\von Sirin\RRpushing\pushing_events_joint.xlsx'; 
+annotations_path = 'Z:\Transfer\Chris\von Sirin\RRpushing\pushing_events.xlsx'; 
 
 sampling_rate_ephys = 20000;
 sampling_rate_treadmill = 50;
@@ -61,12 +61,12 @@ if strcmp(movement_type,'Walking')
     
     movement(xy_movement==1 | z_movement==1) = 1;
 
-    % Fill short gaps 
-    win_size = 0.1; % s
+    % Fill short gaps    
+    win_size = 0.5; % s
     movement = binary_replace_filter(movement, win_size*sampling_rate_treadmill);
-    
+
     % Filter out short bouts
-    win_size = 0.3; % s
+    win_size = 0.8; % s
     movement_fwd = binary_hysteresis_filter(movement, win_size*sampling_rate_treadmill);
     movement_bwd = binary_hysteresis_filter(flipud(movement), win_size*sampling_rate_treadmill);
     movement = double(movement_fwd | flipud(movement_bwd));
@@ -199,6 +199,8 @@ elseif strcmp(movement_type,'Pushing')
     movement = movement_upsampled;
 
 end
+
+disp(['Detected bouts: ',num2str(numel(find(diff(movement)>0)))])
 
 % Save movement data
 save([file_path, file_name, '_movement.mat'], 'movement')
