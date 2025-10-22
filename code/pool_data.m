@@ -2,7 +2,7 @@
 
 % Author: Chris J. Dallmann 
 % Affiliation: University of Wuerzburg
-% Last revision: 14-August-2025
+% Last revision: 21-October-2025
 
 % ------------- BEGIN CODE -------------
 
@@ -12,7 +12,7 @@ clc
 % Settings
 file_path = 'Z:\Transfer\Chris\von Sirin\RRflight\'; 
 save_name = 'treadmill_ephys_rr_gfp_flight';
-meta_data = readtable([file_path,'metadata.csv']);
+meta_data = readtable([file_path,'metadata.csv']); % Should contain only trials for analysis
 
 % Initialize variables
 sampling_rate_ephys = 20000;
@@ -64,7 +64,7 @@ for experiment = 1:numel(experiments)
         [x_vel, y_vel, z_vel, xy_speed, z_speed] = process_treadmill_data(...
             x_vel, y_vel, z_vel, sampling_rate_ephys, sampling_rate_treadmill);
         n_frames_treadmill = numel(x_vel);
-        time_treadmill = linspace(0, n_frames_treadmill/sampling_rate_treadmill, n_frames_treadmill);
+        time_treadmill = linspace(0, n_frames_treadmill/sampling_rate_treadmill, n_frames_treadmill)';
 
         pooled_data(experiment).forward_velocity = x_vel;
         pooled_data(experiment).lateral_velocity = y_vel;
