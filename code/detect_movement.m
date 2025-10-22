@@ -13,10 +13,10 @@ clear
 clc
 
 % Settings
-file_name = '2025_05_09_0008';
-file_path = 'Z:\Transfer\Chris\von Sirin\RRwalking\'; 
-movement_type = 'Walking'; 
-annotations_path = 'Z:\Transfer\Chris\von Sirin\RRpushing\pushing_events.xlsx'; 
+file_name = '2025_08_22_0016';
+file_path = 'Z:\Transfer\Chris\von Sirin\RRflight\'; 
+movement_type = 'Flight'; 
+annotations_path = 'Z:\Transfer\Chris\von Sirin\RRpushing\pushing_events.xlsx'; % Only for pushing
 
 sampling_rate_ephys = 20000;
 sampling_rate_treadmill = 50;
